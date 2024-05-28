@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Signup Page</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #00c6fb, #005bea);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 400px;
+        }
+
+        .tab-group {
+            overflow: hidden;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .tab {
+            display: inline-block;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-size: 18px;
+            color: #555;
+        }
+
+        .tab.active {
+            background: #f8f8f8;
+            border-bottom: 1px solid #fff;
+        }
+
+        .form {
+            padding: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #777;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background: #005bea;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="tab-group">
+        <div class="tab" onclick="changeTab('login')">Login</div>
+        <div class="tab" onclick="changeTab('signup')">Signup</div>
+    </div>
+
+    <div class="form">
+        <div id="login" class="input-group">
+            <label for="loginUsername">Username:</label>
+            <input type="text" id="loginUsername">
+            <div class="error-message" id="loginUsernameError"></div>
+
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword">
+            <div class="error-message" id="loginPasswordError"></div>
+
+            <button onclick="validateLogin()">Login</button>
+        </div>
+
+        <div id="signup" class="input-group" style="display: none;">
+            <label for="signupUsername">Username:</label>
+            <input type="text" id="signupUsername">
+            <div class="error-message" id="signupUsernameError"></div>
+
+            <label for="signupPassword">Password:</label>
+            <input type="password" id="signupPassword">
+            <div class="error-message" id="signupPasswordError"></div>
+
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword">
+            <div class="error-message" id="confirmPasswordError"></div>
+
+            <button onclick="validateSignup()">Signup</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function changeTab(tabName) {
+        document.getElementById('login').style.display = tabName === 'login' ? 'block' : 'none';
+        document.getElementById('signup').style.display = tabName === 'signup' ? 'block' : 'none';
+
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        document.querySelector(`.tab:contains('${tabName.charAt(0).toUpperCase() + tabName.slice(1)}')`).classList.add('active');
+    }
+
+    function validateLogin() {
+        const username = document.getElementById('loginUsername').value;
+        const password = document.getElementById('loginPassword').value;
+        const usernameError = document.getElementById('loginUsernameError');
+        const passwordError = document.getElementById('loginPasswordError');
+
+        usernameError.textContent = '';
+        passwordError.textContent = '';
+
+        if (!username) {
+            usernameError.textContent = 'Username is required';
+        }
+
+        if (!password) {
+            passwordError.textContent = 'Password is required';
+        }
+    }
+
+    function validateSignup() {
+        const username = document.getElementById('signupUsername').value;
+        const password = document.getElementById('signupPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const usernameError = document.getElementById('signupUsernameError');
+        const passwordError = document.getElementById('signupPasswordError');
+        const confirmPasswordError = document.getElementById('confirmPasswordError');
+
+        usernameError.textContent = '';
+        passwordError.textContent = '';
+        confirmPasswordError.textContent = '';
+
+        if (!username) {
+            usernameError.textContent = 'Username is required';
+        }
+
+        if (!password) {
+            passwordError.textContent = 'Password is required';
+        }
+
+        if (password !== confirmPassword) {
+            confirmPasswordError.textContent = 'Passwords do not match';
+        }
+    }
+
+    // Helper function to find elements containing specified text
+    // Used for finding tabs with case-insensitive text
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => changeTab(tab.textContent.toLowerCase()));
+    });
+
+    // Polyfill for :contains selector (not supported in modern browsers)
+    if (!HTMLElement.prototype.matches) {
+        HTMLElement.prototype.matches = HTMLElement.prototype.msMatchesSelector;
+    }
+
+    if (!HTMLElement.prototype.closest) {
+        HTMLElement.prototype.closest = function (s) {
+            let el = this;
+            do {
+                if (el.matches(s)) return el;
+                el = el.parentElement || el.parentNode;
+            } while (el !== null && el.nodeType === 1);
+            return null;
+        };
+    }
+
+    HTMLElement.prototype.contains = function (arg) {
+        return !!(this.compareDocumentPosition(arg) & 16);
+    };
+
+    HTMLElement.prototype.addEventListener = function (event, callback) {
+        this.attachEvent('on' + event, callback);
+    };
+</script>
+
+</body>
+</html>
